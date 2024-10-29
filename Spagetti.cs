@@ -13,30 +13,29 @@ namespace AppWebEspagueti
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>() // Agrega esta línea para usar una clase Startup
-                        .UseUrls("http://0.0.0.0:5000") // Establece el puerto y protocolo a usar
-                        .Configure(app =>
+                    webBuilder.UseUrls("http://0.0.0.0:5000"); // Escucha en todas las interfaces
+                    webBuilder.Configure(app =>
+                    {
+                        app.Run(async context =>
                         {
-                            app.Run(async context =>
+                            string response = "";
+                            string action = context.Request.Query["action"];
+                            if (action == "list")
                             {
-                                string response = "";
-                                string action = context.Request.Query["action"];
-                                if (action == "list")
-                                {
-                                    response = "Listado de celulares: iPhone, Samsung, Xiaomi";
-                                }
-                                else if (action == "buy")
-                                {
-                                    string item = context.Request.Query["item"];
-                                    response = $"Has comprado: {item}";
-                                }
-                                else
-                                {
-                                    response = "Bienvenido a la tienda de celulares. Usa '?action=list' para ver productos.";
-                                }
-                                await context.Response.WriteAsync(response);
-                            });
+                                response = "Listado de celulares: iPhone, Samsung, Xiaomi";
+                            }
+                            else if (action == "buy")
+                            {
+                                string item = context.Request.Query["item"];
+                                response = $"Has comprado: {item}";
+                            }
+                            else
+                            {
+                                response = "Bienvenido a la tienda de celulares. Usa '?action=list' para ver productos.";
+                            }
+                            await context.Response.WriteAsync(response);
                         });
+                    });
                 })
                 .Build();
 
